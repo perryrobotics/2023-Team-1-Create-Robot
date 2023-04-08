@@ -1,4 +1,5 @@
 #include <kipr/wombat.h>
+#include <time.h>
 #include "movement.h"
 #include "sensors.h"
 #include "constants.h"
@@ -6,91 +7,93 @@
 
 int main()
 {
+ 	time_t start_time;   
     printf("Hello World\n");
+    printf("Attempting to connect to Create!\n");
     create_connect();
+    printf("CONNECTED!!\n");
     create_full();
     enable_servos();
-    wireshark_up();
+    set_servo_position(WS,896); // START POSITION
+    //wireshark_up();
     hook_up();
+    
+    wait_for_light(LIGHT);
     shut_down_in(119);
+    start_time = time(NULL);
     //GAME BEGINS!!
 
 
-    wireshark_up();
-
-
-    
-    forward_mm(200, 330); // First red pom pushed
-    drive_to_bump(200);
-
-    // go get second red pom
-    forward_mm(200,81);
-    CW(125, 102);// turn tpo face second box
-    forward_to_black_align(200);  // OUT OF FIRST BOX
-    forward_mm(200,280); 
-
-    forward_to_black_align(150);
-    forward_mm(200,270);
-    forward_to_black_align(100);
-    forward_mm(200,470); // push rings out of way
-    backward_mm(200,200);
-    CW(200, 90);
-    forward_mm(250,325); // ALIGN ON PIPE
-    msleep(500);
-    backward_mm(200,100);
-    backward_to_black(200, LEFT_LINE);
-
-    forward_mm(200,50);
-    CCW(50,102); // FACE WIRESHARK  MAY NEED ADJUSTMENT!!
-
-    // NEW STUFF TO SLAP POMS
-    backward_mm(200,75);
+    wireshark_up(); 
+    CW(150,45);
     wireshark_down();
-    CCW(200, 15);
-    forward_mm(200,200);
-    CW(200,30);
-    CCW(200,30);
-    forward_mm(200,55);
-    CW(200,45);
-    wireshark_up();
-    forward_to_black(100, LEFT_LINE);
+    CW(150,45);
+    forward_mm(100,85);
+    msleep(2000);
+    wireshark_up(); // fling it!!
+    //backward_mm(100,15);
+    CCW(150,100);
+    //forward_mm(100,230);
+    forward_to_black(100, RIGHT_LINE);
+    forward_mm(150,90);
+   CW_to_black(100, LEFT_LINE);
+
+   line_follow(300,1805);
+    //msleep(3000);
+   CW(100,45);
+    forward_mm(100,150);// INSIDE THE SCORE BOX
     backward_to_black(100, RIGHT_LINE);
-    backward_mm(100,100);
+    backward_mm(200,100);
+    CCW(100,45);
     wireshark_down();
-    CCW(200,10);
-
-
-    //forward_mm(200,380);  // GO FORWARD TO WIRESHARK
-    create_drive_straight(-200);
-    while( digital(0) == 0 )
+    forward_mm(100,120);
+    CW(100,90);
+    wireshark_up();
+    backward_mm(100,100);
+    CCW(100,60);
+    wireshark_down();
+    hook_up();
+    // FORWARD UNTIL IT CLICKS
+    create_drive_straight(-100);
+    while ( digital(CLICK_SENSOR) == 0 )
     {
     }
     create_drive_straight(0);
-    backward_mm(100,10);
-
-    // AT THE WIRESHARK!  HOOK IT!
+    // DONE WITH CLICK SENSOR!!
     hook_down();
-    CCW(200, 90);
-    CCW_to_black(200,LEFT_LINE);
-    line_follow(150,1890);
-    //CW(200,10);
+    backward_mm(100,200);
+    CW(100,90);
+    drive_to_bump(100);
+    forward_to_black(150, LEFT_LINE);
+    forward_mm(150,100);
+    CW_to_black(150, LEFT_LINE);
+    line_follow(300,1630);
+    //msleep(14000);//waiting for ping pong balls to fall
+    while ( (time(NULL) - start_time) < 64) // WAIT FOR 64 SECONDS TO GO BY!!!
+    {}
+    CCW(150, 150);
+    wireshark_up();
+    drive_to_bump(200);
+    CCW(100,55);
+    set_servo_position(WS, 2047);
+    msleep(2000);
+    
     /*
-    forward_to_black(300, RIGHT_LINE);
-    msleep(500);
-    forward_to_black(300, RIGHT_LINE);
-    forward_mm(100,200);
-    CCW(100,30);
-    forward_to_black(100, RIGHT_LINE);
-    CW_to_black(100, LEFT_LINE);
-    CCW(50, 5); // correct and face the ping pongs
-    forward_mm(100,410);
-	msleep(7000);
-    backward_mm(100,50);
-    CCW(100,140);
-*/
-    	msleep(7000);
-    backward_mm(100,50);
-    CCW(100,140);
-    create_disconnect();
+    forward_to_black(250, LEFT_LINE); //center of table
+    forward_mm(250,1000);
+    CW(100,100);
+    forward_mm(100,500);//All poms in cybersecurity
+    CW(100,100);
+    
+    forward_to_black(150, LEFT_LINE);
+    forward_mm(150,100);
+    
+        forward_to_black(150, LEFT_LINE);
+    forward_mm(150,200);
+    
+    //CW(50,100);
+    
+
+    */
     return 0;
 }
